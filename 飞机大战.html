@@ -1,0 +1,298 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <title>飞机大战</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      background: #ccc;
+      height: 100%;
+    }
+
+    #plane {
+      position: relative;
+      width: 512px;
+      height: 99vh;
+      margin: 0px auto;
+      border: 1px solid transparent;
+      background: url('img/bg0.jpg') center/cover;
+    }
+
+    #plane.bg0 {
+      background: url('img/bg0.jpg') center/cover;
+    }
+
+    #plane.bg1 {
+      /* 简单模式  index 0 */
+      background: url('img/bg1.jpg') center/cover;
+    }
+
+    #plane.bg2 {
+      background: url('img/bg2.jpg') center/cover;
+    }
+
+    #plane.bg3 {
+      background: url('img/bg3.jpg') center/cover;
+    }
+
+    #plane.bg4 {
+      background: url('img/bg4.jpg') center/cover;
+    }
+
+    #plane h1 {
+      color: azure;
+      text-align: center;
+      padding: 30px;
+    }
+
+    .option {
+      width: 200px;
+      height: 40px;
+      line-height: 40px;
+      font-size: 30px;
+      color: steelblue;
+      background: wheat;
+      border-radius: 10px;
+      border: 1px solid #000;
+      font-weight: bold;
+      margin: 70px auto;
+      text-align: center;
+      cursor: pointer;
+    }
+
+    .footer {
+      position: absolute;
+      right: 0;
+      bottom: 0;
+      font-size: 20px;
+      color: #fff;
+    }
+
+    /* enemy 敌机定位 */
+
+    .enemy {
+      position: absolute;
+    }
+
+    /* 血条 */
+
+    .blood {
+      position: absolute;
+      left: 0;
+      right: 0;
+      top: -6px;
+      margin: 0 auto;
+      width: 70%;
+      height: 2px;
+      border-radius: 2px;
+      border: 1px solid red;
+    }
+
+    .blood p {
+      height: 100%;
+      background: red;
+    }
+
+    /* 小飞机 */
+
+    .weak {
+      width: 50px;
+    }
+
+    img:not(.boom) {
+      width: 100%;
+      height: 100%;
+    }
+
+    /* 大飞机 */
+
+    .strong {
+      width: 60px;
+    }
+
+    .strong .blood {
+      position: absolute;
+      left: 0;
+      right: 0;
+      top: -10px;
+      margin: 0 auto;
+      height: 4px;
+      border-radius: unset;
+    }
+
+    .blood p {
+      height: 100%;
+      background: red;
+    }
+
+    /* 我军 */
+
+    .plane {
+      position: absolute;
+      width: 80px;
+      height: 66px;
+      
+    }
+
+    .biu {
+      position: absolute;
+    }
+
+    .biu.strong1 {
+      width: 16px;
+      height: 16px;
+    }
+
+    .biu.strong2 {
+      width: 20px;
+      height: 20px;
+    }
+
+    /* 爆炸图片 */
+
+    img.boom {
+      position: absolute;
+      animation: opa 1s;
+    }
+
+    @keyframes opa {
+      0% {
+        opacity: 1;
+      }
+
+      25% {
+        opacity: 0.5;
+      }
+
+      50% {
+        opacity: 1;
+      }
+
+      100% {
+        opacity: 0;
+      }
+    }
+
+    /* prize */
+
+    .prize {
+      position: absolute;
+      width: 30px;
+      height: 30px;
+
+      border: 1px dashed greenyellow;
+      border-radius: 50%;
+      animation: prize 1s infinite;
+      background: url(img/speed.png) no-repeat center/50%;
+      box-shadow: inset 0 0 10px greenyellow, 0 0 30px greenyellow;
+    }
+
+    @keyframes prize {
+      0% {
+        transform: scale(1);
+      }
+
+      50% {
+        transform: scale(1.2);
+      }
+
+      100% {
+        transform: scale(1);
+      }
+    }
+
+    /* 得分板 */
+
+    .score {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 70px;
+      height: 30px;
+      color: #fff;
+      font-size: 20px;
+    }
+
+    /* 记录得分 */
+
+    .record {
+      width: 60%;
+      height: 100px;
+      margin: 100px auto;
+      background: #000;
+      padding: 10px;
+      border: 4px double #fff;
+      color: #fff;
+    }
+
+    .record p {
+      height: 50px;
+      font-size: 40px;
+      font-weight: bold;
+      text-align: center;
+      color: skyblue;
+    }
+
+    /* 再来一次 */
+
+    .btn {
+      position: absolute;
+      bottom: 50px;
+      right: 0;
+      left: 0;
+      margin: auto;
+      width: 150px;
+      height: 40px;
+      text-align: center;
+      line-height: 40px;
+      color: #fff;
+      font-size: 20px;
+      font-weight: bold;
+      border-radius: 10px;
+      background: #000;
+      cursor: pointer;
+    }
+  </style>
+</head>
+
+<body>
+  <div id="plane">
+
+  </div>
+
+  <!-- 
+    #plane.bg1 不同的模式 运用不同的类名 给与背景图 达到不同模式调用不同背景的效果
+
+    .option 模式css
+
+    .enemy 敌机css  .weak小飞机 .strong 大飞机
+
+    .boom 爆炸的css 
+    .blood  血条框
+    .blood p 真实的血条
+
+    .plane 我军 .weak 弱机 .strong战斗机
+
+    .biu是设置子弹 
+
+    .prize 奖励 随机掉下的奖励
+    .score   左上角得分板
+    .record 死完 跳出来的的分班
+   -->
+
+  <!-- 第一步: 生成初始界面 -->
+  <!-- 存一些信息 模式 敌机两个不同机型的信息 我军不同机型的信息 边界信息-->
+  <script src="./飞机大战.js"></script>
+
+
+</body>
+
+
+
+</html>
